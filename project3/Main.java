@@ -86,12 +86,45 @@ public class Main {
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
 		
-		// TODO some code
+    	Queue<String> Queue = new LinkedList<String>();
+    	ArrayList<String> wordLadder = new ArrayList<String>();
+    	Set<String> visited = new HashSet<String>();
+		String wordToBeCheck; 							
 		Set<String> dict = makeDictionary();
-		// TODO more code
 		
-		return null; // replace this line later with real return
+		Queue.add(start);						//Initialize Queue with starting word
+		visited.add(start);						
+
+		//This loop occurs continually until the Queue is completely empty -> theoretically when all words checked
+		while(!Queue.isEmpty()){
+			for(int x = 0; x < Queue.poll().length(); x++){
+				for(char y = 'a'; y <= 'z'; y++){
+					wordToBeCheck = getWordToCheck(x, y, Queue.poll());
+					if(!(visited.contains(wordToBeCheck)) && (dict.contains(wordToBeCheck))){
+						Queue.add(wordToBeCheck);
+						visited.add(wordToBeCheck);
+						wordLadder.add(Queue.poll());
+						Queue.remove();
+					}
+					if(wordToBeCheck.equals(end)){
+						wordLadder.add(wordToBeCheck);
+						Queue.remove();
+					}
+				}
+			}
+		}
+		if(wordLadder.contains(end)){
+			printLadder(wordLadder);
+			return wordLadder;
+		}
+		wordLadder.clear();
+		return wordLadder; // replace this line later with real return
 	}
+
+	public static String getWordToCheck(int wordIndex, char alpha, String word){
+    	word = word.replace(word.charAt(wordIndex), alpha);
+    	return word;
+    }
     
 	public static Set<String>  makeDictionary () {
 		Set<String> words = new HashSet<String>();
