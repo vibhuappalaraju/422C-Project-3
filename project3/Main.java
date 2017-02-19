@@ -85,39 +85,60 @@ public class Main {
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-		
-    	Queue<String> Queue = new LinkedList<String>();
+		boolean firstrun_Flag = true;
+    	Queue<Node> Queue = new LinkedList<Node>();
     	ArrayList<String> wordLadder = new ArrayList<String>();
-    	Set<String> visited = new HashSet<String>();
-		String wordToBeCheck; 							
+  //  	HashMap<String, Node> wordTree = new HashMap<String, Node>();						
 		Set<String> dict = makeDictionary();
 		
-		Queue.add(start);						//Initialize Queue with starting word
-		visited.add(start);						
-
-		//This loop occurs continually until the Queue is completely empty -> theoretically when all words checked
-		while(!Queue.isEmpty()){
-			for(int x = 0; x < Queue.poll().length(); x++){
-				for(char y = 'a'; y <= 'z'; y++){
-					wordToBeCheck = getWordToCheck(x, y, Queue.poll());
-					if(!(visited.contains(wordToBeCheck)) && (dict.contains(wordToBeCheck))){
-						Queue.add(wordToBeCheck);
-						visited.add(wordToBeCheck);
-						wordLadder.add(Queue.poll());
-						Queue.remove();
-					}
-					if(wordToBeCheck.equals(end)){
-						wordLadder.add(wordToBeCheck);
-						Queue.remove();
-					}
+		int wordLadderIndex = 0;
+		Node head = new Node(start);
+		Node neighbor;
+		
+		Queue.add(head);
+		head.visited = true;
+		wordLadder.add(start);
+		wordLadderIndex++;
+		
+		while(!Queue.isEmpty()){	
+			int queueSize = Queue.size();
+			for(int q = 0; q < queueSize; q++){
+				head = Queue.poll();
+				for(int x = 0; x < head.word.length(); x++){
+					for(char y = 'a'; y <= 'z'; y++){				
+						neighbor = new Node(getWordToCheck(x, y, head.word));
+						if(!neighbor.visited && dict.contains(neighbor.word)){
+							neighbor.visited = true;
+							neighbor.parentNode = head;
+							dict.remove(neighbor.word);
+							Queue.add(neighbor);
+						}
+						if(neighbor.parentNode == head){
+							wordLadder.add(neighbor.word);
+							wordLadderIndex++;
+							System.out.println(neighbor.word);
+						}
+						if(neighbor.word.equals(end)){
+							wordLadder.add(end);
+							return wordLadder;
+						}
+					}	
+				
 				}
 			}
 		}
+		
+		
+		
+		
+		
 		if(wordLadder.contains(end)){
 			printLadder(wordLadder);
 			return wordLadder;
 		}
 		wordLadder.clear();
+		wordLadder.add(start);
+		wordLadder.add(end);
 		return wordLadder; // replace this line later with real return
 	}
 
