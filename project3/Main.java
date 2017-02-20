@@ -85,15 +85,16 @@ public class Main {
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-		Queue<Node> Queue = new LinkedList<Node>();
+    	
+    	Queue<Node> Queue = new LinkedList<Node>();
     	ArrayList<String> wordLadder = new ArrayList<String>();
 		Set<String> dict = makeDictionary();
-		TreeMap<Integer, Node> wordMap = createWordTree(start, end, dict);
+		Set<String> visitedWords = new HashSet<String>();
 		
 		Node head = new Node(start);
-		Integer level = 0;
 		
-		Queue.add(wordMap.get(level));
+		Queue.add(head);
+		visitedWords.add(head.word);
 		
 		while(!Queue.isEmpty()){
 			
@@ -104,12 +105,17 @@ public class Main {
 			
 			for(int u = 0; u < queueSize; u++){
 				head = Queue.poll();
+
 				if(head.word.equals(end)){
 					break;
 				}
+				
+				head.neighbors = allNeighbors(head.word, dict);
+				
 				for(Node n : head.neighbors){
-					if(!n.visited){
-						n.visited = true;
+					if(!visitedWords.contains(n.word)){
+						//n.visited = true;
+						visitedWords.add(n.word);
 						n.parentNode = head;
 						Queue.add(n);
 					}
@@ -125,7 +131,7 @@ public class Main {
 		Collections.reverse(wordLadder);
 		
 		if(wordLadder.contains(end)){
-			//printLadder(wordLadder);
+			
 			return wordLadder;
 		}
 		wordLadder.clear();
@@ -134,38 +140,23 @@ public class Main {
 		return wordLadder; // replace this line later with real return
 	}
 
-	 public static TreeMap<Integer, Node> createWordTree(String s, String end, Set<String> dict){
-    	TreeMap<Integer, Node> wt = new TreeMap<Integer, Node>();
-    	Integer level = 0;
-    	Queue<Node> q = new LinkedList<Node>(); 
+	public static ArrayList<Node> allNeighbors(String s, Set<String> dict){
+    	ArrayList<Node> n = new ArrayList<Node>();
     	
-    	Node head = new Node(s);
-    	q.add(head);
-    	while(!q.isEmpty()){
-    		int queueSize = q.size();
-    		for(int p = 0; p < queueSize; p++){
-    			
-    			head = q.poll();
-    			wt.put(level, head);
-    			if(head.word.equals(end)){
-    				return wt;
-    			}
-    			for(int x = 0; x < head.word.length(); x++){
-    				for(char y = 'a'; y <= 'z'; y++){
-    					String temp = getWordToCheck(x, y, head.word);
-    					if(dict.contains(temp) && !temp.equals(head.word)){
-    						Node n = new Node(temp);
-    						q.add(n);
-    						head.neighbors.add(n);
-    					}
-    				}
-    			}
+    	for(int x = 0; x < s.length(); x++){
+    		for(char y = 'a'; y <= 'z'; y++){
+    			String temp = getWordToCheck(x, y, s);
+				if(dict.contains(temp.toUpperCase()) && !temp.equals(s)){
+					Node neigh = new Node(temp);
+					n.add(neigh);
+				}
     		}
-    		level++;
     	}
-    	return wt;
     	
+    	return n;
     }
+
+	 
 
 	public static String getWordToCheck(int wordIndex, char alpha, String word){
     	word = word.replace(word.charAt(wordIndex), alpha);
