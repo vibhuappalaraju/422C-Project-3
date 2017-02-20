@@ -18,7 +18,7 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-	
+    ArrayList<String> bleh = new ArrayList<String>();
 	// static variables and constants only here.
 	
 	public static void main(String[] args) throws Exception {
@@ -34,7 +34,10 @@ public class Main {
 			kb = new Scanner(System.in);// default from Stdin
 			ps = System.out;			// default to Stdout
 		}
-		ArrayList<String> bleh = new ArrayList<String>(parse(kb));
+		bleh = parse(kb);
+        initialize();
+        printLadder(getWordLadderDFS(wordladder.get(0),wordladder.get(1)));
+        System.out.println("HELLLO");
 		
 		// TODO methods to read in words, output ladder
 	}
@@ -77,6 +80,16 @@ public class Main {
 		// Return empty list if no ladder.
 		// TODO some code
 		Set<String> dict = makeDictionary();
+        if (end.equals(start)){
+            System.out.print("no word ladder can be found between "+start+" and "+end);
+            System.exit(0);
+        }
+        
+        ArrayList<String> printlist = new ArrayList<String>();
+        printlist.add(start);
+        printlist=DFS(start,end,printlist,Dictionary);
+        
+        return printlist;
 		// TODO more code
 		
 		
@@ -178,8 +191,60 @@ public class Main {
 		}
 		return words;
 	}
+    
+    public static ArrayList<String> DFS(String start, String end, ArrayList<String> visited, Set<String> Dictionary) {
+        
+        Dictionary.remove(start.toUpperCase());
+        
+        if (start.equals(end)) {
+            
+            
+            return visited;
+            
+        }
+        
+        for (int x = 0; x < start.length(); x++) {
+            StringBuilder startword = new StringBuilder(start);
+            for (int y = 0; y < 26; y++) {
+                
+                startword.setCharAt(x, (char) ('a' + y));
+                if (Dictionary.contains(startword.toString().toUpperCase()) && !visited.contains(startword.toString())) {
+                    
+                    visited.add(startword.toString());
+                    Dictionary.remove(startword.toString().toUpperCase());
+                    //					ArrayList<String> whatever = new ArrayList<String>();
+                    //					whatever = DFS(startword.toString(), end, visited, Dictionary);
+                    //					if(whatever != null){
+                    //						return whatever;
+                    //					}
+                    //					else{
+                    //						visited.remove(startword.toString());
+                    //					}
+                    ArrayList<String> whatever = new ArrayList<String>();
+                    whatever = DFS(startword.toString(), end, visited, Dictionary);
+                    if (whatever == null) {
+                        visited.remove(startword.toString());
+                        
+                    } else {
+                        //visited = DFS(startword.toString(), end, visited, Dictionary);
+                        return whatever;
+                    }
+                    
+                }
+                
+            }
+            
+        }
+        return null;
+        
+    }
 	
 	public static void printLadder(ArrayList<String> ladder) {
+        if(ladder == null){
+            System.out.print("no word ladder can be found between "+wordladder.get(0)+" and "+wordladder.get(1));
+            
+        }
+        System.out.print(ladder.toString());
 		
 	}
 	// TODO
