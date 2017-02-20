@@ -18,7 +18,7 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    ArrayList<String> bleh = new ArrayList<String>();
+    static ArrayList<String> wordladder = new ArrayList<String>();
 	// static variables and constants only here.
 	
 	public static void main(String[] args) throws Exception {
@@ -34,7 +34,7 @@ public class Main {
 			kb = new Scanner(System.in);// default from Stdin
 			ps = System.out;			// default to Stdout
 		}
-		bleh = parse(kb);
+		wordladder = parse(kb);
         initialize();
         printLadder(getWordLadderDFS(wordladder.get(0),wordladder.get(1)));
         System.out.println("HELLLO");
@@ -87,14 +87,14 @@ public class Main {
         
         ArrayList<String> printlist = new ArrayList<String>();
         printlist.add(start);
-        printlist=DFS(start,end,printlist,Dictionary);
+        printlist=DFS(start,end,printlist,dict);
         
         return printlist;
 		// TODO more code
 		
 		
 		
-		return null; // replace this line later with real return
+		 // replace this line later with real return
 	}
 	
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
