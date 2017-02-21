@@ -144,8 +144,7 @@ public class Main {
 			}
 
 		}
-		
-		if(!head.word.equals(end)){	//Repeat the same process if first time failed, but with end as start
+		/*		if(!head.word.equals(end)){	//Repeat the same process if first time failed, but with end as start
 			head = new Node(end);
 			end = start;
 			visitedWords.clear();
@@ -172,6 +171,8 @@ public class Main {
 			}
 		}
 		
+		 * */
+
 		if(head.word.equals(end)){
 			//Uses parent pointers to add path to word ladder array list
 			while(head != null){
@@ -184,11 +185,9 @@ public class Main {
 		}
 		
 		wordLadder.clear();
-		wordLadder.add(start);
-		wordLadder.add(end);
-
 		return wordLadder; 
 	}
+    
 
 	/**
      * Locates all words in dictionary with a one letter difference between 
