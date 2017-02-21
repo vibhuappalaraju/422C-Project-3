@@ -18,9 +18,9 @@ import java.util.*;
 import java.io.*;
 
 public class Main {
-    static ArrayList<String> wordladder = new ArrayList<String>();
-	// static variables and constants only here.
-	
+    static ArrayList<String> wordladderBFS = new ArrayList<String>();
+	static ArrayList<String> wordladderDFS = new ArrayList<String>();
+    
 	public static void main(String[] args) throws Exception {
 		
 		Scanner kb;	// input Scanner for commands
@@ -34,12 +34,22 @@ public class Main {
 			kb = new Scanner(System.in);// default from Stdin
 			ps = System.out;			// default to Stdout
 		}
-		wordladder = parse(kb);
-        initialize();
-        printLadder(getWordLadderDFS(wordladder.get(0),wordladder.get(1)));
-        System.out.println("HELLLO");
-		
-		// TODO methods to read in words, output ladder
+		ArrayList<String> userInput = new ArrayList<String>();
+		userInput = parse(kb);
+        
+        while(!userInput.contains("/quit")){
+        	initialize();
+        	while(userInput.size() < 2){
+        		userInput = parse(kb);
+        	}
+        	wordladderBFS = getWordLadderBFS(userInput.get(0),userInput.get(1));
+        	wordladderDFS = getWordLadderDFS(userInput.get(0),userInput.get(1));
+        	printLadder(wordladderBFS);
+        	System.out.println();
+        	printLadder(wordladderDFS);
+        	System.out.println();
+        	userInput.clear();
+        }
 	}
 	
 	public static void initialize() {
@@ -97,8 +107,14 @@ public class Main {
 		 // replace this line later with real return
 	}
 	
+    /**
+	 * Uses breadth first search to find word ladder between start and end
+	 * @param start , the first word to begin the word search
+	 * @param end , the last word to end the word ladder
+	 * @return an ArrayList<String> containing the word ladder
+	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-    	
+    	int secondTime = 0;				//indicates which loop word ladder found in
     	Queue<Node> Queue = new LinkedList<Node>();
     	ArrayList<String> wordLadder = new ArrayList<String>();
 		Set<String> dict = makeDictionary();
@@ -106,17 +122,37 @@ public class Main {
 		
 		Node head = new Node(start);
 		
-		Queue.add(head);
-		visitedWords.add(head.word);
+		Queue.add(head);				//Add starting word to the Queue
+		visitedWords.add(head.word);	//Add to visited set so no word repeats
+		head.parentNode = null;			
 		
-		while(!Queue.isEmpty()){
-			
-			if(head.word.equals(end)){
+		while(!Queue.isEmpty()){	
+			head = Queue.poll();	//Remove top element from the queue
+
+			if(head.word.equals(end)){	//End search if we found the end word
 				break;
 			}
-			int queueSize = Queue.size();
+				
+			head.neighbors = allNeighbors(head.word, dict); //find all words in dictionary with one letter difference
+				
+			for(Node n : head.neighbors){ 				//Iterate through all "neighbors"
+				if(!visitedWords.contains(n.word)){
+					visitedWords.add(n.word);
+					n.parentNode = head;			//Make the parent node head -> for backtracing
+					Queue.add(n);					
+				}
+			}
+
+		}
+		
+		if(!head.word.equals(end)){	//Repeat the same process if first time failed, but with end as start
+			head = new Node(end);
+			end = start;
+			visitedWords.clear();
+			secondTime++;			//Let's know that in the second loop at the end
+			Queue.add(head);
 			
-			for(int u = 0; u < queueSize; u++){
+			while(!Queue.isEmpty()){ 
 				head = Queue.poll();
 
 				if(head.word.equals(end)){
@@ -127,7 +163,6 @@ public class Main {
 				
 				for(Node n : head.neighbors){
 					if(!visitedWords.contains(n.word)){
-						//n.visited = true;
 						visitedWords.add(n.word);
 						n.parentNode = head;
 						Queue.add(n);
@@ -137,28 +172,38 @@ public class Main {
 			}
 		}
 		
-		while(head != null){
-			wordLadder.add(head.word);
-			head = head.parentNode;
-		}
-		Collections.reverse(wordLadder);
-		
-		if(wordLadder.contains(end)){
-			
+		if(head.word.equals(end)){
+			//Uses parent pointers to add path to word ladder array list
+			while(head != null){
+				wordLadder.add(head.word);
+				head = head.parentNode;
+			}
+			if(secondTime == 0) //Only reverse if word ladder found in first loop
+				Collections.reverse(wordLadder);
 			return wordLadder;
 		}
+		
 		wordLadder.clear();
 		wordLadder.add(start);
 		wordLadder.add(end);
-		return wordLadder; // replace this line later with real return
+
+		return wordLadder; 
 	}
 
+	/**
+     * Locates all words in dictionary with a one letter difference between 
+     * them and the String; returns an ArrayList<Node> array 
+     * @param s : the String we are finding neighbors of
+     * @param dict : the Dictionary with available words
+     * @return	AArrayList<Node> array with all neighbor nodes
+     */
 	public static ArrayList<Node> allNeighbors(String s, Set<String> dict){
     	ArrayList<Node> n = new ArrayList<Node>();
     	
     	for(int x = 0; x < s.length(); x++){
     		for(char y = 'a'; y <= 'z'; y++){
     			String temp = getWordToCheck(x, y, s);
+    			//Only adds words within the dictionary
 				if(dict.contains(temp.toUpperCase()) && !temp.equals(s)){
 					Node neigh = new Node(temp);
 					n.add(neigh);
@@ -169,8 +214,17 @@ public class Main {
     	return n;
     }
 
+
 	 
 
+	/**
+	 * This function takes a word index, a char, and a String and
+	 * replaces the String[word index] with the char
+	 * @param wordIndex is the index of the word to replace with char
+	 * @param alpha character
+	 * @param word	String
+	 * @return	A new string with the above changes
+	 */
 	public static String getWordToCheck(int wordIndex, char alpha, String word){
     	word = word.replace(word.charAt(wordIndex), alpha);
     	return word;
