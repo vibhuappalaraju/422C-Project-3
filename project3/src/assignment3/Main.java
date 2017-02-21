@@ -127,13 +127,13 @@ public class Main {
 		head.parentNode = null;			
 		
 		while(!Queue.isEmpty()){	
-			head = Queue.poll();	//Remove top element from the queue
+			head = Queue.poll();		//Remove top element from the queue
 
 			if(head.word.equals(end)){	//End search if we found the end word
 				break;
 			}
 				
-			head.neighbors = allNeighbors(head.word, dict); //find all words in dictionary with one letter difference
+			head.neighbors = allNeighbors(head.word, dict, secondTime); //find all words in dictionary with one letter difference
 				
 			for(Node n : head.neighbors){ 				//Iterate through all "neighbors"
 				if(!visitedWords.contains(n.word)){
@@ -159,7 +159,7 @@ public class Main {
 					break;
 				}
 				
-				head.neighbors = allNeighbors(head.word, dict);
+				head.neighbors = allNeighbors(head.word, dict, secondTime);
 				
 				for(Node n : head.neighbors){
 					if(!visitedWords.contains(n.word)){
@@ -197,7 +197,7 @@ public class Main {
      * @param dict : the Dictionary with available words
      * @return	AArrayList<Node> array with all neighbor nodes
      */
-	public static ArrayList<Node> allNeighbors(String s, Set<String> dict){
+	public static ArrayList<Node> allNeighbors(String s, Set<String> dict, int secondTime){
     	ArrayList<Node> n = new ArrayList<Node>();
     	
     	for(int x = 0; x < s.length(); x++){
@@ -205,8 +205,16 @@ public class Main {
     			String temp = getWordToCheck(x, y, s);
     			//Only adds words within the dictionary
 				if(dict.contains(temp.toUpperCase()) && !temp.equals(s)){
-					Node neigh = new Node(temp);
-					n.add(neigh);
+					if(secondTime == 1){
+						Node neigh = new Node(temp);
+						n.add(neigh);
+					}
+					else {
+						if(oneLetterDifference(s, temp)){
+							Node neigh = new Node(temp);
+							n.add(neigh);
+						}
+					}
 				}
     		}
     	}
