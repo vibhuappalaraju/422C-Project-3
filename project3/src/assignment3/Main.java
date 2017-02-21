@@ -114,7 +114,7 @@ public class Main {
 	 * @return an ArrayList<String> containing the word ladder
 	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-    	int secondTime = 0;				//indicates which loop word ladder found in
+   
     	Queue<Node> Queue = new LinkedList<Node>();
     	ArrayList<String> wordLadder = new ArrayList<String>();
 		Set<String> dict = makeDictionary();
@@ -133,7 +133,7 @@ public class Main {
 				break;
 			}
 				
-			head.neighbors = allNeighbors(head.word, dict, secondTime); //find all words in dictionary with one letter difference
+			head.neighbors = allNeighbors(head.word, dict); //find all words in dictionary with one letter difference
 				
 			for(Node n : head.neighbors){ 				//Iterate through all "neighbors"
 				if(!visitedWords.contains(n.word)){
@@ -144,43 +144,14 @@ public class Main {
 			}
 
 		}
-		/*		if(!head.word.equals(end)){	//Repeat the same process if first time failed, but with end as start
-			head = new Node(end);
-			end = start;
-			visitedWords.clear();
-			secondTime++;			//Let's know that in the second loop at the end
-			Queue.add(head);
-			
-			while(!Queue.isEmpty()){ 
-				head = Queue.poll();
-
-				if(head.word.equals(end)){
-					break;
-				}
-				
-				head.neighbors = allNeighbors(head.word, dict, secondTime);
-				
-				for(Node n : head.neighbors){
-					if(!visitedWords.contains(n.word)){
-						visitedWords.add(n.word);
-						n.parentNode = head;
-						Queue.add(n);
-					}
-				}
-
-			}
-		}
 		
-		 * */
-
 		if(head.word.equals(end)){
 			//Uses parent pointers to add path to word ladder array list
 			while(head != null){
 				wordLadder.add(head.word);
 				head = head.parentNode;
 			}
-			if(secondTime == 0) //Only reverse if word ladder found in first loop
-				Collections.reverse(wordLadder);
+			Collections.reverse(wordLadder);
 			return wordLadder;
 		}
 		
@@ -196,24 +167,19 @@ public class Main {
      * @param dict : the Dictionary with available words
      * @return	AArrayList<Node> array with all neighbor nodes
      */
-	public static ArrayList<Node> allNeighbors(String s, Set<String> dict, int secondTime){
+	public static ArrayList<Node> allNeighbors(String s, Set<String> dict){
     	ArrayList<Node> n = new ArrayList<Node>();
     	
     	for(int x = 0; x < s.length(); x++){
     		for(char y = 'a'; y <= 'z'; y++){
     			String temp = getWordToCheck(x, y, s);
     			//Only adds words within the dictionary
-				if(dict.contains(temp.toUpperCase()) && !temp.equals(s)){
-					if(secondTime == 1){
+				if(dict.contains(temp.toUpperCase()) && !temp.equals(s) && oneLetterDifference(s, temp)){
+				
 						Node neigh = new Node(temp);
 						n.add(neigh);
-					}
-					else {
-						if(oneLetterDifference(s, temp)){
-							Node neigh = new Node(temp);
-							n.add(neigh);
-						}
-					}
+					
+					
 				}
     		}
     	}
