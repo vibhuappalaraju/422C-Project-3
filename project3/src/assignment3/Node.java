@@ -1,26 +1,12 @@
-/* WORD LADDER Main.java
- * EE422C Project 3 submission by
- * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
- * Slip days used: <0>
- * Git URL:
- * Fall 2016
- */
-
 package assignment3;
 
-import java.util.*;
+import java.util.ArrayList;
 
 public class Node {
-
-
-ArrayList<String> storeladder = new ArrayList<String>();
-String storeword;
-
-
+	public Node parentNode = null;
+	public String word;
+	public ArrayList<Node> neighbors = new ArrayList<Node>();
+	Node(String s){
+		this.word = s;
+	}
 }
