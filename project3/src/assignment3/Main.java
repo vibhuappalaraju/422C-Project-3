@@ -12,7 +12,7 @@
  * Fall 2016
  */
 
-package project3;
+package assignment3;
 
 import java.io.File;
 import java.io.FileNotFoundException;
