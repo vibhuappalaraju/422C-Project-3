@@ -1,17 +1,16 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
  * Replace <...> with your actual data.
- * <Student1 Name>
- * <Student1 EID>
- * <Student1 5-digit Unique No.>
+ * Vibhu Appalaraju
+ * vka249
+ * 16235
  * <Student2 Name>
  * <Student2 EID>
  * <Student2 5-digit Unique No.>
  * Slip days used: <0>
- * Git URL:
- * Fall 2016
+ * Git URL:https://github.com/vibhuappalaraju/422C-Project-3.git
+ * Spring 2017
  */
-
 package assignment3;
 
 import java.io.File;
@@ -42,7 +41,7 @@ public class Main {
 		}
 
 		wordladder = parse(kb);
-		if (wordladder == null) {
+		if (wordladder.size()==0) {
 			return;
 		}
 
@@ -86,23 +85,24 @@ public class Main {
 		return kb;
 	}
 /**
- * 
- * @param start 
- * @param end
- * @return
+ * This function returns the DFS Ladder and if the DFS ladder is null then they add the start and the end word
+ * @param start is the starting String for the word ladder
+ * @param end is the ending String for the word ladder
+ * @return ArrayList getWordLadderDFS which contains the start and the end word if there is no word ladder and
+ * the full ladder if a word ladder exists between start and end.
  */
 	public static ArrayList<String> getWordLadderDFS(String start, String end) {
 		Set<String> Dictionary = makeDictionary();
 
 
-		ArrayList<String> printlist = new ArrayList<String>();
-		printlist.add(start);
-		printlist = DFS(start, end, printlist, Dictionary);
-		if(printlist == null){
-			printlist = new ArrayList<String>();
-			printlist.add(start.toLowerCase());
-		printlist.add(end.toLowerCase());}
-		return printlist;
+		ArrayList<String> beentolist = new ArrayList<String>();
+		beentolist.add(start);// add the start word to the been to arraylist and passes it as a paramater with the start word, end word and dictionary.
+		beentolist = DFS(start, end, beentolist, Dictionary);
+		if(beentolist == null){// there is no word ladder so we add the start word and end word and return the arraylist
+			beentolist = new ArrayList<String>();
+			beentolist.add(start.toLowerCase());
+		beentolist.add(end.toLowerCase());}
+		return beentolist;
 		
 	}
 	
@@ -210,14 +210,14 @@ public class Main {
 		return words;
 	}
 /**
- * 
- * @param ladder
+ *  This function prints either the DFS or BFS word ladder
+ * @param ladder is the ArrayList<String>  which contains the word ladder between two words
  */
 	public static void printLadder(ArrayList<String> ladder) {
-		if (ladder.size() <=2 ) {
+		if (ladder.size() <=2 ) { //prints there is no ladder if there is no ladder or if the ladder is just the start word and end word
 			System.out.print("no word ladder can be found between " + ladder.get(0) + " and " + ladder.get(1));
 
-		} else {
+		} else { // if a word ladder exists we print each word in the ladder ArrayList
 			System.out.println("a " + (ladder.size()) + "-rung word ladder exists between " + ladder.get(0) + " and "
 					+ ladder.get(ladder.size()-1));
 			for (String s : ladder) {
@@ -227,17 +227,22 @@ public class Main {
 	}
 	
 /**
- * 
- * @param start
- * @param end
- * @param visited
- * @param Dictionary
- * @return
+ * This function changes the start word and checks if its in the dictionary. If it does, it passes that 
+ * word as a paramter and is recursively call till it finds the end word.if the new word does not have a path 
+ * to the end word it will return null.
+ * @param start is the starting String for the word ladder
+ * @param end is the ending String for the word ladder
+ * @param visited is an ArrayList<String> which keeps track of all the words visited and if it does not have a 
+ * path to a new word or the end word, it will remove it from the visited array list
+ * @param Dictionary is a Set<String> which is being passed recursively so we do not repeat the words being passed 
+ * as a paramter recursively
+ * @return is an ArrayList<String> which returns either null if there is no word ladder and the word ladder if there
+ * is a word ladder from the start word to the end word.
  */
 	public static ArrayList<String> DFS(String start, String end, ArrayList<String> visited, Set<String> Dictionary) {
 
-		Dictionary.remove(start.toUpperCase());
-		if (start.equals(end)) {
+		Dictionary.remove(start.toUpperCase());// removes the start word from the dictionary so we do not find it again
+		if (start.equals(end)) {// checks if the start word is the end word
 			return visited;
 
 		}
@@ -246,21 +251,22 @@ public class Main {
 			StringBuilder startword = new StringBuilder(start);
 			for (int y = 0; y < 26; y++) {
 
-				startword.setCharAt(x, (char) ('a' + y));
-				if (Dictionary.contains(startword.toString().toUpperCase())
+				startword.setCharAt(x, (char) ('a' + y));// changes the string such that it looks for a one letter difference of the word
+				if (Dictionary.contains(startword.toString().toUpperCase())// checks the dictionary if that one letter difference of the startword is in the dictionary or has been visited
 						&& !visited.contains(startword.toString())) {
 
-					visited.add(startword.toString());
-					Dictionary.remove(startword.toString().toUpperCase());
+					visited.add(startword.toString());// add the newly changed string to the visited list
+					Dictionary.remove(startword.toString().toUpperCase());//removes the  newly changes string form the dictionary
+
 
 					ArrayList<String> visitladder = new ArrayList<String>();
-					visitladder = DFS(startword.toString(), end, visited, Dictionary);
-					if (visitladder == null) {
-						visited.remove(startword.toString());
+					visitladder = DFS(startword.toString(), end, visited, Dictionary);// calls itself on the newly changed function (recursion)
+					if (visitladder == null) {// if the newly changed word does not ever reach the end word recursively it will return null
+						visited.remove(startword.toString()); // returning null will remove the newly changed word from the visited list
 
 					} else {
 						
-						return visitladder;
+						return visitladder;// if the word is eventually found it will return the arraylist which will contain the full ladder
 					}
 
 				}
@@ -268,7 +274,7 @@ public class Main {
 			}
 
 		}
-		return null;
+		return null;// this will return null if the start word does not ever reach a one letter difference word in the dictionary
 
 	}
 
