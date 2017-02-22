@@ -1,12 +1,11 @@
 /* WORD LADDER Main.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
  * Vibhu Appalaraju
  * vka249
  * 16235
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * Megan Cooper
+ * mlc4285
+ * <16235
  * Slip days used: <0>
  * Git URL:https://github.com/vibhuappalaraju/422C-Project-3.git
  * Spring 2017
@@ -49,8 +48,6 @@ public class Main {
 		printLadder(getWordLadderDFS(wordladder.get(0), wordladder.get(1)));
 		System.out.println("");
 		printLadder(getWordLadderBFS(wordladder.get(0), wordladder.get(1)));
-
-		// TODO methods to read in words, output ladder
 	}
 
 	public static void initialize() {

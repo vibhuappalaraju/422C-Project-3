@@ -1,12 +1,11 @@
-/* WORD LADDER Main.java
+/* Node.java
  * EE422C Project 3 submission by
- * Replace <...> with your actual data.
  * Vibhu Appalaraju
  * vka249
  * 16235
- * <Student2 Name>
- * <Student2 EID>
- * <Student2 5-digit Unique No.>
+ * Megan Cooper
+ * mlc4285
+ * <16235
  * Slip days used: <0>
  * Git URL:https://github.com/vibhuappalaraju/422C-Project-3.git
  * Spring 2017
@@ -14,7 +13,9 @@
 package assignment3;
 
 import java.util.ArrayList;
-
+/* This is the general structure of each word node
+ * Used in BFS , utilizes parentNode to travese path to get the word ladder
+ */
 public class Node {
 	public Node parentNode = null;
 	public String word;
