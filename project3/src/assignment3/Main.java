@@ -107,76 +107,92 @@ public class Main {
 	}
 	
 /**
- * 
- * @param start
- * @param end
- * @return
- */
-	public static ArrayList<String> getWordLadderBFS(String start, String end) {
-
-		Set<String> Dictionary = makeDictionary();
-		Queue<Node> words = new LinkedList<Node>();
-		Node first = new Node();
-		first.storeword = start;
-		words.add(first);
-		int wordlength = start.length();
-		boolean queuechecker = words.isEmpty();
-		int x = 0;
-		int y = 0;
-
-		while (!queuechecker) {
-			Node addtoqueue = new Node();
-			addtoqueue = words.remove();
-			String freshword = addtoqueue.storeword;
-
-			addtoqueue.storeladder.add(freshword);
-
-			if (freshword.equals(end)) {
-
-				
-
-				// return the ladder here instead
-
-				return addtoqueue.storeladder;
-
-			}
+	 * Uses breadth first search to find word ladder between start and end
+	 * @param start , the first word to begin the word search
+	 * @param end , the last word to end the word ladder
+	 * @return an ArrayList<String> containing the word ladder
+	 */
+    public static ArrayList<String> getWordLadderBFS(String start, String end) {
+    	Queue<Node> Queue = new LinkedList<Node>();
+    	ArrayList<String> wordLadder = new ArrayList<String>();
+		Set<String> dict = makeDictionary();
+		Set<String> visitedWords = new HashSet<String>();
+	//	ArrayList<Node> neighbors = new ArrayList<Node>();
+		
+		Node head = new Node(start);
+		
+		Queue.add(head);				//Add starting word to the Queue
+		visitedWords.add(head.word);	//Add to visited set so no word repeats
+		head.parentNode = null;			
+		
+		
+		while(!Queue.isEmpty()){
 			
-
-			StringBuilder wordusing = new StringBuilder(freshword);
-
-			Dictionary.remove(wordusing.toString().toUpperCase());
-			while (x < wordlength) {
-				while (y < 26) {
-					wordusing.setCharAt(x, (char) ('a' + y));
-					if (Dictionary.contains(wordusing.toString().toUpperCase())) {
-						Node addword = new Node();
-						addword.storeword = wordusing.toString();
-						addword.storeladder = new ArrayList<String>(addtoqueue.storeladder);
-						words.add(addword);
-						Dictionary.remove(wordusing.toString());
-
-					}
-
-					wordusing = new StringBuilder(freshword);
-					y++;
-
-				}
-
-				x++;
-				y = 0;
-
+			head = Queue.remove();		//Remove top element from the queue
+			dict.remove(head.word.toUpperCase());
+			if(head.word.equals(end)){	//End search if we found the end word
+				break;
 			}
-
-			x = 0;
-			queuechecker = words.isEmpty();
-
+		
+			head.neighbors = allNeighbors(head.word, dict); //find all words in dictionary with one letter difference
+			
+			for(Node n : head.neighbors){ 				//Iterate through all "neighbors"
+				
+				if(!visitedWords.contains(n.word)){
+					visitedWords.add(n.word);
+					n.parentNode = head;			
+					Queue.add(n);		
+					
+				}
+			}
+		
 		}
-		ArrayList<String> emptylist = new ArrayList<String>();
-		emptylist.add(start.toLowerCase());
-		emptylist.add(end.toLowerCase());
-		return emptylist; // return empty ladder
-
+		
+		
+		
+		if(head.word.equals(end)){
+			while(head != null){
+				wordLadder.add(head.word);
+				head = head.parentNode;
+			}
+			Collections.reverse(wordLadder);
+			return wordLadder;
+		}
+		
+		wordLadder.clear();
+		wordLadder.add(start);
+		wordLadder.add(end);
+		return wordLadder; 
 	}
+    
+    /**
+     * Locates all words in dictionary with a one letter difference between 
+     * them and the String; returns an ArrayList<Node> array 
+     * @param s : the String we are finding neighbors of
+     * @param dict : the Dictionary with available words
+     * @return	AArrayList<Node> array with all neighbor nodes
+     */
+	public static ArrayList<Node> allNeighbors(String s, Set<String> dict){
+    	ArrayList<Node> n = new ArrayList<Node>();
+    	StringBuilder wl = new StringBuilder(s);
+    	
+    	for(int x = 0; x < s.length(); x++){
+    		for(char y = 'a'; y <= 'z'; y++){
+    			wl.setCharAt(x, y);
+    			String temp = wl.toString();
+    			//Only adds words within the dictionary
+    			
+				if(dict.contains(temp.toUpperCase()) && oneLetterDifference(s, temp)){
+					Node neigh = new Node(temp);
+					n.add(neigh);
+					dict.remove(temp.toUpperCase());
+				}
+				wl = new StringBuilder(s);
+    		}
+    	}
+    	
+    	return n;
+    }
 
 	public static Set<String> makeDictionary() {
 		Set<String> words = new HashSet<String>();
@@ -254,6 +270,27 @@ public class Main {
 		}
 		return null;
 
+	}
+
+	/**
+	 * This method determines whether there is a one letter
+	 * difference between String a and String b
+	 * @param a String
+	 * @param b	String
+	 * @return	true if one letter difference, false otherwise
+	 */
+	private static boolean oneLetterDifference(String a, String b){
+		int difference = 0;
+		for(int x = 0; x < a.length(); x++){
+			if(a.charAt(x) != b.charAt(x)){
+				difference++;
+			}
+		}
+		
+		if(difference == 1){
+			return true;
+		}
+		return false;
 	}
 
 }
