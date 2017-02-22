@@ -107,14 +107,8 @@ public class Main {
 		 // replace this line later with real return
 	}
 	
-    /**
-	 * Uses breadth first search to find word ladder between start and end
-	 * @param start , the first word to begin the word search
-	 * @param end , the last word to end the word ladder
-	 * @return an ArrayList<String> containing the word ladder
-	 */
     public static ArrayList<String> getWordLadderBFS(String start, String end) {
-   
+    	
     	Queue<Node> Queue = new LinkedList<Node>();
     	ArrayList<String> wordLadder = new ArrayList<String>();
 		Set<String> dict = makeDictionary();
@@ -145,6 +139,8 @@ public class Main {
 
 		}
 		
+		
+		
 		if(head.word.equals(end)){
 			//Uses parent pointers to add path to word ladder array list
 			while(head != null){
@@ -156,6 +152,8 @@ public class Main {
 		}
 		
 		wordLadder.clear();
+		wordLadder.add(start);
+		wordLadder.add(end);
 		return wordLadder; 
 	}
     
@@ -274,6 +272,24 @@ public class Main {
         System.out.print(ladder.toString());
 		
 	}
-	// TODO
-	// Other private static methods here
+	/**
+	 * This method determines whether there is a one letter
+	 * difference between String a and String b
+	 * @param a String
+	 * @param b	String
+	 * @return	true if one letter difference, false otherwise
+	 */
+	private static boolean oneLetterDifference(String a, String b){
+		int difference = 0;
+		for(int x = 0; x < a.length(); x++){
+			if(a.charAt(x) != b.charAt(x)){
+				difference++;
+			}
+		}
+		//return true if the difference is <= 1
+		if(difference <= 1){
+			return true;
+		}
+		return false;
+	}
 }
